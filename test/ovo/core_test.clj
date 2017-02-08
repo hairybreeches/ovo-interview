@@ -1,7 +1,7 @@
 (ns ovo.core-test
   (:require [clojure.test :refer :all]
-            [ovo.core :refer :all]))
+            [ovo.core :refer :all]
+            [schema.core :as s]
+            [schema.test]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+(use-fixtures :once schema.test/validate-schemas)

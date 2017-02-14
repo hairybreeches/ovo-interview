@@ -14,19 +14,39 @@
   [input]
   {
    :date (first (keys input))
-   :consumption (first (vals input))
+   :meter-read (first (vals input))
    }
   )
 
 (defn- total-consumption
   [daily-consumptions]
   (->> daily-consumptions
-       (map :consumption)
+       (map :meter-read)
        (apply +)))
 
-(defn get-month-sum
+(defn month-start-readings
   [input]
   (->> input
        (map data->map)
-       (group-by (comp year-month :date))
-       (map-vals total-consumption)))
+       (partition-by (comp year-month :date))
+       (map first)
+       (map #(assoc % :year-month (year-month (:date %))))
+       ;(group-by (comp year-month :date))
+       ;(map-vals first)
+       ;(map-vals :meter-read)))
+       ))
+
+(defn current-month-consumption
+  [next-month current-month]
+  {
+   :year-month (:year-month current-month)
+   :usage (- (:meter-read next-month) (:meter-read current-month))
+   }
+  )
+
+(defn get-month-usage
+  [input]
+  (let [starts (month-start-readings input)]
+    (->> starts
+         (map current-month-consumption (drop 1 starts))
+    )))

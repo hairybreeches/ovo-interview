@@ -12,3 +12,5 @@ pom.xml.asc
 .git/**
 .lein-failures
 .idea/**
+.nrepl-port
+.lein-repl-history
